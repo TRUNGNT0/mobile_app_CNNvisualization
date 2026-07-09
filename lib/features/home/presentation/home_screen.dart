@@ -9,6 +9,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isPhone = screenWidth < 600;
+    final horizontalPadding = isPhone ? 16.0 : 24.0;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0x991A1C22),
@@ -17,12 +21,15 @@ class HomeScreen extends StatelessWidget {
           children: [
             const Icon(Icons.visibility, color: Color(0xFF528DFF)),
             const SizedBox(width: 8),
-            Text(
-              'AI Vision Lab',
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: const Color(0xFFE2E2E8),
-                  ),
+            Expanded(
+              child: Text(
+                'AI Vision Lab',
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFFE2E2E8),
+                    ),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),
@@ -37,26 +44,33 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Hero Section
-              _buildHeroSection(context),
-              const SizedBox(height: 24),
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1200),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(horizontalPadding),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Hero Section
+                    _buildHeroSection(context, isPhone),
+                    const SizedBox(height: 24),
 
-              // Bento Grid Section
-              _buildBentoGrid(context),
-              const SizedBox(height: 24),
+                    // Bento Grid Section
+                    _buildBentoGrid(context, isPhone),
+                    const SizedBox(height: 24),
 
-              // Recently viewed models
-              _buildRecentlyViewedHeader(context),
-              const SizedBox(height: 12),
-              _buildRecentlyViewedList(context),
-              const SizedBox(height: 100), // padding for bottom bar
-            ],
+                    // Recently viewed models
+                    _buildRecentlyViewedHeader(context),
+                    const SizedBox(height: 12),
+                    _buildRecentlyViewedList(context),
+                    const SizedBox(height: 100),
+                  ],
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -68,10 +82,10 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeroSection(BuildContext context) {
+  Widget _buildHeroSection(BuildContext context, bool isPhone) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(24.0),
+      padding: EdgeInsets.all(isPhone ? 20 : 24),
       decoration: BoxDecoration(
         color: const Color(0xFF1A1C22),
         borderRadius: BorderRadius.circular(24),
@@ -98,61 +112,67 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Learn Computer Vision through Interactive Visualization',
             style: TextStyle(
               fontFamily: 'Inter',
-              fontSize: 24,
+              fontSize: isPhone ? 20 : 24,
               fontWeight: FontWeight.bold,
-              color: Color(0xFFE2E2E8),
+              color: const Color(0xFFE2E2E8),
               height: 1.2,
             ),
           ),
           const SizedBox(height: 12),
-          const Text(
+          Text(
             'Dive into the architecture of neural networks. Experiment with real-time model parameters and see the math come to life.',
             style: TextStyle(
               fontFamily: 'Inter',
-              fontSize: 14,
-              color: Color(0xFFC2C6D6),
+              fontSize: isPhone ? 13 : 14,
+              color: const Color(0xFFC2C6D6),
               height: 1.4,
             ),
           ),
           const SizedBox(height: 20),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF528DFF),
-              foregroundColor: const Color(0xFF0F1115),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+          SizedBox(
+            width: isPhone ? double.infinity : null,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF528DFF),
+                foregroundColor: const Color(0xFF0F1115),
+                padding: EdgeInsets.symmetric(
+                  horizontal: isPhone ? 16 : 20,
+                  vertical: 14,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const LearnScreen()),
-              );
-            },
-            icon: const Text(
-              'START LEARNING',
-              style: TextStyle(
-                fontFamily: 'JetBrains Mono',
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LearnScreen()),
+                );
+              },
+              icon: const Text(
+                'START LEARNING',
+                style: TextStyle(
+                  fontFamily: 'JetBrains Mono',
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
               ),
+              label: const Icon(Icons.arrow_forward, size: 16),
             ),
-            label: const Icon(Icons.arrow_forward, size: 16),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildBentoGrid(BuildContext context) {
+  Widget _buildBentoGrid(BuildContext context, bool isPhone) {
     return Column(
       children: [
-        // CNN Visualizer (Main visual block)
+        // CNN Visualizer - Main visual block
         GestureDetector(
           onTap: () {
             Navigator.push(
@@ -161,8 +181,8 @@ class HomeScreen extends StatelessWidget {
             );
           },
           child: Container(
-            constraints: const BoxConstraints(
-              minHeight: 180,
+            constraints: BoxConstraints(
+              minHeight: isPhone ? 160 : 180,
             ),
             width: double.infinity,
             padding: const EdgeInsets.all(20),
@@ -203,7 +223,7 @@ class HomeScreen extends StatelessWidget {
                       'CNN Visualizer',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.bold,
-                            fontSize: 20,
+                            fontSize: isPhone ? 18 : 20,
                           ),
                     ),
                     const SizedBox(height: 4),
@@ -219,81 +239,113 @@ class HomeScreen extends StatelessWidget {
         ),
         const SizedBox(height: 16),
 
-        // 2 Column Bento Row 1
-        Row(
-          children: [
-            Expanded(
-              child: _buildBentoCard(
-                context: context,
-                title: 'Model Explorer',
-                subtitle: 'Browse pre-trained vision models.',
-                icon: Icons.grid_view,
-                iconColor: const Color(0xFFD6BAFF),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const VisualizerScreen()),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildBentoCard(
-                context: context,
-                title: 'Compare Models',
-                subtitle: 'Benchmark performance metrics.',
-                icon: Icons.compare_arrows,
-                iconColor: const Color(0xFFFFB77D),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const CompareScreen()),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
+        // Bento Cards Grid - Responsive
+        LayoutBuilder(
+          builder: (context, constraints) {
+            if (isPhone || constraints.maxWidth < 700) {
+              // Stack vertically on small screens
+              return Column(
+                children: [
+                  _buildBentoCard(
+                    context: context,
+                    title: 'Model Explorer',
+                    subtitle: 'Browse pre-trained vision models.',
+                    icon: Icons.grid_view,
+                    iconColor: const Color(0xFFD6BAFF),
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const VisualizerScreen())),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildBentoCard(
+                    context: context,
+                    title: 'Compare Models',
+                    subtitle: 'Benchmark performance metrics.',
+                    icon: Icons.compare_arrows,
+                    iconColor: const Color(0xFFFFB77D),
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CompareScreen())),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildBentoCard(
+                    context: context,
+                    title: 'Learning Center',
+                    subtitle: 'Theoretical depth and tutorials.',
+                    icon: Icons.school,
+                    iconColor: const Color(0xFF528DFF),
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LearnScreen())),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildBentoCard(
+                    context: context,
+                    title: 'Knowledge Quiz',
+                    subtitle: 'Test your CV understanding.',
+                    icon: Icons.quiz,
+                    iconColor: const Color(0xFFFBBF24),
+                    borderColor: const Color(0xFFFBBF24).withOpacity(0.2),
+                    backgroundColor: const Color(0xFFFBBF24).withOpacity(0.05),
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QuizScreen())),
+                  ),
+                ],
+              );
+            }
 
-        // 2 Column Bento Row 2
-        Row(
-          children: [
-            Expanded(
-              child: _buildBentoCard(
-                context: context,
-                title: 'Learning Center',
-                subtitle: 'Theoretical depth and tutorials.',
-                icon: Icons.school,
-                iconColor: const Color(0xFF528DFF),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LearnScreen()),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: _buildBentoCard(
-                context: context,
-                title: 'Knowledge Quiz',
-                subtitle: 'Test your CV understanding.',
-                icon: Icons.quiz,
-                iconColor: const Color(0xFFFBBF24),
-                borderColor: const Color(0xFFFBBF24).withOpacity(0.2),
-                backgroundColor: const Color(0xFFFBBF24).withOpacity(0.05),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const QuizScreen()),
-                  );
-                },
-              ),
-            ),
-          ],
+            // Desktop / Tablet - 2 columns
+            return Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildBentoCard(
+                        context: context,
+                        title: 'Model Explorer',
+                        subtitle: 'Browse pre-trained vision models.',
+                        icon: Icons.grid_view,
+                        iconColor: const Color(0xFFD6BAFF),
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const VisualizerScreen())),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _buildBentoCard(
+                        context: context,
+                        title: 'Compare Models',
+                        subtitle: 'Benchmark performance metrics.',
+                        icon: Icons.compare_arrows,
+                        iconColor: const Color(0xFFFFB77D),
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const CompareScreen())),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildBentoCard(
+                        context: context,
+                        title: 'Learning Center',
+                        subtitle: 'Theoretical depth and tutorials.',
+                        icon: Icons.school,
+                        iconColor: const Color(0xFF528DFF),
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LearnScreen())),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: _buildBentoCard(
+                        context: context,
+                        title: 'Knowledge Quiz',
+                        subtitle: 'Test your CV understanding.',
+                        icon: Icons.quiz,
+                        iconColor: const Color(0xFFFBBF24),
+                        borderColor: const Color(0xFFFBBF24).withOpacity(0.2),
+                        backgroundColor: const Color(0xFFFBBF24).withOpacity(0.05),
+                        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const QuizScreen())),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
         ),
       ],
     );
@@ -312,7 +364,6 @@ class HomeScreen extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 170,
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: backgroundColor ?? const Color(0xFF1A1C22),
